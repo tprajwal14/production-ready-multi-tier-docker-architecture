@@ -1,8 +1,18 @@
+<<<<<<< HEAD
 🚀 Multi-Tier Web Application Deployment Using Docker Compose
+=======
+# 🚀 Multi-Tier Web Application Deployment Using Docker Compose
+>>>>>>> 2d2d2bd (modify file)
 
-A professional multi-tier web application deployment using NGINX, PHP-FPM, MySQL, Docker Compose, Linux, and AWS EC2.
+A production-oriented **multi-tier web application architecture** demonstrating containerized deployment with **NGINX, PHP-FPM, and MySQL** using Docker Compose.
 
-🏗️ Architecture
+The project focuses on practical DevOps concepts including containerization, service isolation, Docker networking, persistent storage, Linux administration, troubleshooting, and deployment on AWS EC2.
+
+---
+
+## 🏗️ Architecture
+
+```text
                          Internet
                             |
                          HTTP :80
@@ -37,8 +47,11 @@ Docker Volumes
 -----------------------------
 mydir  -> Shared application files
 mydata -> Persistent MySQL data
+```
 
-Request Flow
+### Request Flow
+
+```text
 Client
   |
   v
@@ -49,26 +62,41 @@ PHP-FPM :9000
   |
   v
 MySQL :3306
-🎯 Project Objectives
-Deploy a multi-tier web application using Docker Compose
-Containerize the web, application, and database layers
-Implement Docker network isolation
-Use Docker volumes for persistent storage
-Demonstrate container-to-container communication
-Deploy and manage the application on Linux/Ubuntu
-Deploy and troubleshoot the environment on AWS EC2
-Practice Docker and Linux administration
-🛠️ Technology Stack
-Technology	Purpose
-Docker	Application containerization
-Docker Compose	Multi-container orchestration
-NGINX	Web server
-PHP 8.3-FPM	Application runtime
-MySQL	Relational database
-Linux / Ubuntu	Server operating system
-AWS EC2	Cloud deployment
-Git / GitHub	Version control
-📁 Repository Structure
+```
+
+---
+
+## 🎯 Project Objectives
+
+- Deploy a multi-tier web application using Docker Compose
+- Containerize the web, application, and database layers
+- Implement Docker network isolation using frontend and backend networks
+- Use Docker volumes for persistent application and database data
+- Demonstrate container-to-container communication
+- Deploy and manage the application on Linux/Ubuntu
+- Deploy and troubleshoot the environment on AWS EC2
+- Practice essential Docker and Linux administration commands
+
+---
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Docker | Application containerization |
+| Docker Compose | Multi-container orchestration |
+| NGINX | Web server |
+| PHP 8.3-FPM | Application runtime |
+| MySQL | Relational database |
+| Linux / Ubuntu | Server operating system |
+| AWS EC2 | Cloud deployment |
+| Git / GitHub | Version control and project hosting |
+
+---
+
+## 📁 Repository Structure
+
+```text
 Linux/
 ├── Multi-Tier_Web_Application.yml
 ├── README.md
@@ -77,42 +105,89 @@ Linux/
     ├── docker-containers-running.jpg
     ├── mysql-database-verification.jpg
     └── nginx-web-server.jpg
-🐳 Docker Services
-NGINX — myweb
-Web server
-Port 80
-Connected to the frontend network
-Uses the mydir volume
-Handles incoming HTTP requests
-PHP-FPM — myapp
-Application runtime
-PHP 8.3-FPM
-Port 9000
-Connected to frontend and backend
-Uses the mydir volume
-MySQL — mydb
-Database layer
-Connected to the backend network
-Uses the mydata volume
-Creates the mydatabase database
-🌐 Docker Network Architecture
-Network	Services	Purpose
-frontend	NGINX + PHP-FPM	Web-to-application communication
-backend	PHP-FPM + MySQL	Application-to-database communication
-NGINX
-  |
-  | frontend
-  |
-PHP-FPM
-  |
-  | backend
-  |
-MySQL
-💾 Docker Volumes
-Volume	Purpose
-mydir	Shared application files
-mydata	Persistent MySQL data
-⚙️ Docker Compose Configuration
+```
+
+---
+
+## 🐳 Docker Services
+
+### 1. NGINX — `myweb`
+
+**Role:** Web server
+
+- Exposes port `80`
+- Connected to the `frontend` network
+- Shares application files through the `mydir` volume
+- Receives HTTP requests from clients
+
+### 2. PHP-FPM — `myapp`
+
+**Role:** Application runtime
+
+- Uses PHP `8.3-FPM`
+- Exposes port `9000`
+- Connected to both `frontend` and `backend` networks
+- Shares application files through `mydir`
+
+### 3. MySQL — `mydb`
+
+**Role:** Database layer
+
+- Uses MySQL
+- Connected only to the `backend` network
+- Uses `mydata` for persistent database storage
+- Creates the `mydatabase` database
+
+---
+
+## 🌐 Docker Network Architecture
+
+The application uses two isolated Docker networks:
+
+| Network | Connected Services | Purpose |
+|---|---|---|
+| `frontend` | NGINX + PHP-FPM | Web-to-application communication |
+| `backend` | PHP-FPM + MySQL | Application-to-database communication |
+
+This separation limits direct communication between the web server and database layer.
+
+```text
+                frontend network
+        +-----------------------------+
+        |                             |
+     NGINX ---------------------- PHP-FPM
+        |                             |
+        +-----------------------------+
+                                      |
+                                backend network
+                                      |
+                                    MySQL
+```
+
+---
+
+## 💾 Docker Volumes
+
+| Volume | Mount Purpose | Persistence |
+|---|---|---|
+| `mydir` | Shared application files | Yes |
+| `mydata` | MySQL database files | Yes |
+
+Persistent volumes ensure that container recreation does not automatically remove application or database data.
+
+---
+
+## ⚙️ Docker Compose Configuration
+
+The main Compose file is:
+
+```text
+Multi-Tier_Web_Application.yml
+```
+
+Example configuration:
+
+```yaml
 services:
   mydb:
     image: mysql
@@ -155,62 +230,153 @@ networks:
 volumes:
   mydata:
   mydir:
-🔐 Environment Variables
+```
 
-Create a .env file:
+---
 
+## 🔐 Environment Variables
+
+Do not store real credentials directly in the Compose file or Git repository.
+
+Create a local `.env` file:
+
+```env
 MYSQL_ROOT_PASSWORD=your_secure_password
+```
 
-Add .env to .gitignore:
+Add `.env` to `.gitignore`:
 
+```gitignore
 .env
+```
 
-Never commit real passwords, API keys, private keys, or other secrets to GitHub.
+> Never commit production passwords, API keys, private keys, or other secrets to GitHub.
 
-🚀 Deployment
-Prerequisites
-Docker
-Docker Compose
-Git
-Ubuntu/Linux server
-AWS EC2 instance
-EC2 Security Group allowing HTTP port 80
+---
 
-Verify installation:
+## 🚀 Deployment Guide
 
+### Prerequisites
+
+Install the following on the Ubuntu/AWS EC2 server:
+
+- Docker
+- Docker Compose plugin
+- Git
+- SSH access
+- Open port `80` in the EC2 security group
+
+Verify Docker:
+
+```bash
 docker --version
 docker compose version
-Clone Repository
+```
+
+---
+
+### Clone the Repository
+
+```bash
 git clone https://github.com/tprajwal14/dockerized-multi-tier-web-application.git
 cd dockerized-multi-tier-web-application
+```
 
-If the project is inside the Linux directory:
+> If the repository contains the project inside a `Linux/` directory, run `cd Linux` before executing the Compose commands.
 
-cd Linux
-Start Application
+---
+
+### Configure Environment Variables
+
+```bash
+nano .env
+```
+
+Example:
+
+```env
+MYSQL_ROOT_PASSWORD=your_secure_password
+```
+
+---
+
+### Start the Application
+
+```bash
 sudo docker compose -f Multi-Tier_Web_Application.yml up -d
+```
 
-Check containers:
+Check running containers:
 
+```bash
 sudo docker ps
-🔍 Verify Deployment
-Container Status
+```
+
+---
+
+## 🔍 Verify the Deployment
+
+### Check Container Status
+
+```bash
 sudo docker ps
+```
+
+Expected services:
+
+```text
+myweb
+myapp
+mydb
+```
+
+Check all containers:
+
+```bash
 sudo docker ps -a
-Docker Networks
+```
+
+---
+
+### Check Docker Networks
+
+```bash
 sudo docker network ls
+```
+
+Inspect a network:
+
+```bash
 sudo docker network inspect <network-name>
-Docker Volumes
+```
+
+---
+
+### Check Docker Volumes
+
+```bash
 sudo docker volume ls
+```
+
+Inspect a volume:
+
+```bash
 sudo docker volume inspect <volume-name>
-🌐 NGINX Verification
+```
 
-Open:
+---
 
+## 🌐 NGINX Web Server Verification
+
+After the containers are running, open:
+
+```text
 http://YOUR_EC2_PUBLIC_IP
+```
 
-Request flow:
+The HTTP request reaches the NGINX container on port `80`.
 
+```text
 Browser
    |
    v
@@ -218,110 +384,190 @@ EC2 Public IP :80
    |
    v
 NGINX
-🗄️ MySQL Verification
+```
 
-Connect to MySQL:
+---
 
+## 🗄️ MySQL Database Verification
+
+Connect to the MySQL container:
+
+```bash
 sudo docker exec -it <mysql-container> mysql -u root -p
+```
 
-Check databases:
+Then verify the database:
 
+```sql
 SHOW DATABASES;
+```
 
-Expected database:
+The expected database is:
 
+```text
 mydatabase
-🧰 Useful Docker Commands
-Containers
+```
+
+---
+
+## 🧰 Useful Docker Commands
+
+### Container Management
+
+```bash
 sudo docker ps
 sudo docker ps -a
 sudo docker start <container>
 sudo docker stop <container>
 sudo docker restart <container>
 sudo docker rm <container>
-Logs
+```
+
+### Logs
+
+```bash
 sudo docker logs <container>
 sudo docker logs -f <container>
-Container Shell
+```
+
+### Container Shell
+
+```bash
 sudo docker exec -it <container> /bin/bash
-Docker Compose
+```
+
+### Compose Management
+
+```bash
 sudo docker compose -f Multi-Tier_Web_Application.yml ps
 sudo docker compose -f Multi-Tier_Web_Application.yml logs
 sudo docker compose -f Multi-Tier_Web_Application.yml logs -f
 sudo docker compose -f Multi-Tier_Web_Application.yml restart
 sudo docker compose -f Multi-Tier_Web_Application.yml down
-🛠️ Troubleshooting
+```
 
-Check containers:
+### Stop and Remove Volumes
 
+```bash
+sudo docker compose -f Multi-Tier_Web_Application.yml down -v
+```
+
+> **Warning:** `down -v` removes Docker volumes. This can permanently remove stored MySQL data. Use it only when you intentionally want to delete persistent data.
+
+---
+
+## 🛠️ Troubleshooting
+
+### Check All Containers
+
+```bash
 sudo docker ps -a
+```
 
-Check Compose:
+### Check Compose Status
 
+```bash
 sudo docker compose -f Multi-Tier_Web_Application.yml ps
+```
 
-Check logs:
+### View Application Logs
 
+```bash
 sudo docker compose -f Multi-Tier_Web_Application.yml logs
+```
 
-Follow logs:
+### Follow Logs in Real Time
 
+```bash
 sudo docker compose -f Multi-Tier_Web_Application.yml logs -f
+```
 
-Restart services:
+### Restart the Application
 
+```bash
 sudo docker compose -f Multi-Tier_Web_Application.yml restart
+```
 
-Check networks:
+### Check Network Connectivity
 
+```bash
 sudo docker network ls
 sudo docker network inspect <network-name>
+```
 
-Check volumes:
+### Check Persistent Storage
 
+```bash
 sudo docker volume ls
 sudo docker volume inspect <volume-name>
+```
 
-Warning: docker compose down -v removes Docker volumes and may permanently delete MySQL data.
+---
 
-📸 Screenshots
-Docker Compose Configuration
+## 📸 Screenshots
 
-Docker Containers Running
+### ⚙️ Docker Compose Configuration
 
-NGINX Web Server
+![Docker Compose Configuration](screenshots/docker-compose-configuration.jpg)
 
-MySQL Database Verification
+### Docker Containers Running
 
-🔒 Security Considerations
-Do not commit .env files
-Never expose production credentials
-Restrict AWS Security Group inbound rules
-Avoid publicly exposing MySQL port 3306
-Use HTTPS/TLS for public applications
-Pin Docker image versions
-Use least-privilege database users
-Regularly update container images
-Scan images for vulnerabilities
-Implement application and infrastructure monitoring
-Use AWS Secrets Manager or another secret-management solution for production
-🔮 Future Enhancements
-GitHub Actions CI/CD
-Jenkins CI/CD
-Amazon ECR
-Automated AWS EC2 deployment
-Terraform Infrastructure as Code
-AWS Secrets Manager
-HTTPS with Let's Encrypt
-Prometheus and Grafana
-Centralized logging
-Container vulnerability scanning
-Docker health checks
-Load balancing
-Kubernetes
-Auto Scaling
-Infrastructure automation
-💡 DevOps Skills Demonstrated
+![Docker Containers Running](screenshots/docker-containers-running.jpg)
+
+### NGINX Web Server
+
+![NGINX Web Server](screenshots/nginx-web-server.jpg)
+
+### 🗄️ MySQL Database Verification
+
+![MySQL Database Verification](screenshots/mysql-database-verification.jpg)
+
+---
+
+## 🔒 Security Considerations
+
+For a production deployment, consider the following:
+
+- Do not commit `.env` files or credentials
+- Use Docker secrets or a cloud secret-management service
+- Avoid exposing MySQL port `3306` publicly unless required
+- Restrict AWS Security Group inbound rules
+- Use HTTPS/TLS for public traffic
+- Pin container image versions instead of relying on floating tags
+- Add container health checks
+- Use least-privilege database users
+- Regularly update base images
+- Scan container images for vulnerabilities
+- Centralize application and container logs
+- Monitor CPU, memory, disk, and application health
+
+---
+
+## 🔮 Future Enhancements
+
+The project can be extended with:
+
+- GitHub Actions CI/CD
+- Jenkins CI/CD pipeline
+- Docker image build and push to Amazon ECR
+- AWS EC2 automated deployment
+- Terraform infrastructure as code
+- AWS Secrets Manager
+- HTTPS with Let's Encrypt
+- Prometheus and Grafana monitoring
+- Centralized logging
+- Container image vulnerability scanning
+- Docker health checks
+- Load balancing
+- Kubernetes deployment
+- Auto Scaling
+- Infrastructure automation
+
+---
+
+## 💡 DevOps Skills Demonstrated
+
+```text
 Linux Administration
 Docker
 Docker Compose
@@ -335,22 +581,34 @@ AWS EC2
 Git
 GitHub
 Application Deployment
-Production Support
-Cloud Infrastructure
-✨ Project Highlights
-Multi-tier application architecture
-Containerized NGINX web server
-PHP 8.3-FPM application runtime
-MySQL database container
-Frontend and backend network separation
-Persistent Docker volumes
-Linux-based deployment
-AWS EC2 deployment
-Docker troubleshooting
-Git and GitHub project management
+Production Support Concepts
+```
 
-👨‍💻 Author
+---
 
-Prajwal Take
+## ✨ Project Highlights
+
+- Multi-tier application architecture
+- Separate frontend and backend Docker networks
+- Persistent database storage
+- Containerized NGINX web server
+- PHP 8.3-FPM application runtime
+- MySQL database container
+- Linux-based deployment
+- AWS EC2 deployment experience
+- Practical Docker troubleshooting
+- GitHub-based project documentation
+
+---
+
+## 👨‍💻 Author
+
+**Prajwal Take**
 
 AWS | DevOps | Linux | Docker | Cloud
+
+---
+
+## 📌 Disclaimer
+
+This project is intended for **learning, portfolio demonstration, and DevOps practice**. Additional security, availability, observability, and infrastructure controls should be implemented before using a similar architecture for a production workload.
