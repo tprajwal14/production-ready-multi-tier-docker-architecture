@@ -1,0 +1,43 @@
+services:
+
+  mydb:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: mydatabase
+    networks:
+      - backend
+    volumes:
+      - mydata:/var/lib/mysql
+
+  myapp:
+    image: php:8.3-fpm
+    ports:
+      - "9000:9000"
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - mydir:/var/www/html
+
+  myweb:
+    image: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - mydb
+      - myapp
+    networks:
+      - frontend
+    volumes:
+      - mydir:/usr/share/nginx/html
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  mydata:
+  mydir:
