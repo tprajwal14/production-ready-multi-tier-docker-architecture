@@ -1,50 +1,76 @@
 🚀 Multi-Tier Web Application Deployment Using Docker Compose
 
-A containerized multi-tier web application demonstrating NGINX + PHP-FPM + MySQL using Docker Compose. This project focuses on containerization, service isolation, Docker networking, persistent storage, and Linux/AWS EC2 deployment.
+A production-oriented multi-tier web application architecture demonstrating containerized deployment with NGINX, PHP-FPM, and MySQL using Docker Compose.
+
+The project focuses on practical DevOps concepts including containerization, service isolation, Docker networking, persistent storage, Linux administration, troubleshooting, and deployment on AWS EC2.
 
 🏗️ Architecture
 
-Internet
-   │
- HTTP :80
-   ▼
-┌───────────────┐
-│     NGINX     │
-│     myweb     │
-└───────┬───────┘
-        │
- Frontend Network
-        │
-┌───────▼───────┐
-│    PHP-FPM    │
-│     myapp     │
-│    PHP 8.3    │
-└───────┬───────┘
-        │
- Backend Network
-        │
-┌───────▼───────┐
-│     MySQL     │
-│     mydb      │
-└───────────────┘
+                         Internet
+                            |
+                         HTTP :80
+                            |
+                            v
+                  +-------------------+
+                  |       NGINX       |
+                  |      myweb        |
+                  |   Web Server      |
+                  +---------+---------+
+                            |
+                     Frontend Network
+                            |
+                            v
+                  +-------------------+
+                  |     PHP-FPM       |
+                  |      myapp        |
+                  |      PHP 8.3      |
+                  | Application Layer |
+                  +---------+---------+
+                            |
+                     Backend Network
+                            |
+                            v
+                  +-------------------+
+                  |       MySQL       |
+                  |       mydb        |
+                  |   Database Layer  |
+                  +-------------------+
 
-Volumes:
-mydir  → Shared application files
-mydata → Persistent MySQL data
+Docker Volumes
+-----------------------------
+mydir  -> Shared application files
+mydata -> Persistent MySQL data
+
+Request Flow
+
+Client
+  |
+  v
+NGINX :80
+  |
+  v
+PHP-FPM :9000
+  |
+  v
+MySQL :3306
 
 🎯 Project Objectives
 
 Deploy a multi-tier web application using Docker Compose
 
-Containerize NGINX, PHP-FPM, and MySQL
+Containerize the web, application, and database layers
 
-Implement frontend and backend Docker network isolation
+Implement Docker network isolation using frontend and backend networks
 
-Use Docker volumes for persistent data
+Use Docker volumes for persistent application and database data
 
-Verify container-to-container communication
+Demonstrate container-to-container communication
 
-Deploy and troubleshoot the application on Linux/AWS EC2
+Deploy and manage the application on Linux/Ubuntu
+
+Deploy and troubleshoot the environment on AWS EC2
+
+Practice essential Docker and Linux administration commands
 
 🛠️ Technology Stack
 
@@ -54,7 +80,7 @@ Purpose
 
 Docker
 
-Containerization
+Application containerization
 
 Docker Compose
 
@@ -62,7 +88,7 @@ Multi-container orchestration
 
 NGINX
 
-Web server / reverse proxy
+Web server
 
 PHP 8.3-FPM
 
@@ -70,15 +96,19 @@ Application runtime
 
 MySQL
 
-Database
+Relational database
 
 Linux / Ubuntu
 
-Server environment
+Server operating system
 
 AWS EC2
 
 Cloud deployment
+
+Git / GitHub
+
+Version control and project hosting
 
 📁 Repository Structure
 
@@ -91,47 +121,108 @@ Linux/
     ├── mysql-database-verification.jpg
     └── nginx-web-server.jpg
 
-⚙️ Docker Compose Configuration
-
-The application contains three services:
+🐳 Docker Services
 
 1. NGINX — myweb
 
-Exposes HTTP port 80
+Role: Web server
 
-Serves the web application
+Exposes port 80
 
 Connected to the frontend network
 
-Shares application files through mydir
+Shares application files through the mydir volume
+
+Receives HTTP requests from clients
 
 2. PHP-FPM — myapp
 
-PHP 8.3-FPM
+Role: Application runtime
 
-Connected to frontend and backend networks
+Uses PHP 8.3-FPM
 
-Shares application files with NGINX
+Exposes port 9000
 
-Handles PHP application processing
+Connected to both frontend and backend networks
+
+Shares application files through mydir
 
 3. MySQL — mydb
 
-Provides database storage
+Role: Database layer
 
-Connected to the backend network
+Uses MySQL
 
-Uses mydata for persistent storage
+Connected only to the backend network
 
-Initializes mydatabase
+Uses mydata for persistent database storage
 
-📦 Compose File
+Creates the mydatabase database
 
-The complete configuration is available in:
+🌐 Docker Network Architecture
+
+The application uses two isolated Docker networks:
+
+Network
+
+Connected Services
+
+Purpose
+
+frontend
+
+NGINX + PHP-FPM
+
+Web-to-application communication
+
+backend
+
+PHP-FPM + MySQL
+
+Application-to-database communication
+
+This separation limits direct communication between the web server and database layer.
+
+                frontend network
+        +-----------------------------+
+        |                             |
+     NGINX ---------------------- PHP-FPM
+        |                             |
+        +-----------------------------+
+                                      |
+                                backend network
+                                      |
+                                    MySQL
+
+💾 Docker Volumes
+
+Volume
+
+Mount Purpose
+
+Persistence
+
+mydir
+
+Shared application files
+
+Yes
+
+mydata
+
+MySQL database files
+
+Yes
+
+Persistent volumes ensure that container recreation does not automatically remove application or database data.
+
+⚙️ Docker Compose Configuration
+
+The main Compose file is:
 
 Multi-Tier_Web_Application.yml
 
-Example:
+Example configuration:
 
 services:
   mydb:
@@ -176,34 +267,67 @@ volumes:
   mydata:
   mydir:
 
-Security: Never commit real passwords to GitHub. Use a .env file or secret-management solution.
+🔐 Environment Variables
+
+Do not store real credentials directly in the Compose file or Git repository.
+
+Create a local .env file:
 
 MYSQL_ROOT_PASSWORD=your_secure_password
 
-Add to .gitignore:
+Add .env to .gitignore:
 
 .env
 
-🚀 Deployment
+Never commit production passwords, API keys, private keys, or other secrets to GitHub.
 
-Clone the repository
+🚀 Deployment Guide
+
+Prerequisites
+
+Install the following on the Ubuntu/AWS EC2 server:
+
+Docker
+
+Docker Compose plugin
+
+Git
+
+SSH access
+
+Open port 80 in the EC2 security group
+
+Verify Docker:
+
+docker --version
+docker compose version
+
+Clone the Repository
 
 git clone https://github.com/tprajwal14/dockerized-multi-tier-web-application.git
-cd Linux
+cd dockerized-multi-tier-web-application
 
-Create environment file
+If the repository contains the project inside a Linux/ directory, run cd Linux before executing the Compose commands.
+
+Configure Environment Variables
 
 nano .env
 
-Add:
+Example:
 
 MYSQL_ROOT_PASSWORD=your_secure_password
 
-Start the application
+Start the Application
 
 sudo docker compose -f Multi-Tier_Web_Application.yml up -d
 
-Verify containers
+Check running containers:
+
+sudo docker ps
+
+🔍 Verify the Deployment
+
+Check Container Status
 
 sudo docker ps
 
@@ -213,154 +337,129 @@ myweb
 myapp
 mydb
 
-🌐 Application Verification
+Check all containers:
 
-Open:
+sudo docker ps -a
 
-http://YOUR_EC2_PUBLIC_IP
-
-Application flow:
-
-Client → NGINX :80 → PHP-FPM :9000 → MySQL
-
-🔍 Docker Verification
-
-Networks
+Check Docker Networks
 
 sudo docker network ls
-
-Network design:
-
-Frontend: NGINX ↔ PHP-FPM
-Backend:  PHP-FPM ↔ MySQL
 
 Inspect a network:
 
 sudo docker network inspect <network-name>
 
-Volumes
+Check Docker Volumes
 
 sudo docker volume ls
 
-Expected volumes:
+Inspect a volume:
 
-mydata
-mydir
+sudo docker volume inspect <volume-name>
 
-mydata stores MySQL data persistently.
+🌐 NGINX Web Server Verification
 
-mydir is shared between NGINX and PHP-FPM for application files.
+After the containers are running, open:
 
-Running Containers
+http://YOUR_EC2_PUBLIC_IP
 
-sudo docker ps
+The HTTP request reaches the NGINX container on port 80.
 
-Container
+Browser
+   |
+   v
+EC2 Public IP :80
+   |
+   v
+NGINX
 
-Role
+🗄️ MySQL Database Verification
 
-Port
-
-myweb
-
-NGINX Web Server
-
-80
-
-myapp
-
-PHP-FPM Application
-
-9000
-
-mydb
-
-MySQL Database
-
-3306
-
-🗄️ MySQL Verification
-
-Access MySQL:
+Connect to the MySQL container:
 
 sudo docker exec -it <mysql-container> mysql -u root -p
 
-Check databases:
+Then verify the database:
 
 SHOW DATABASES;
 
-Configured database:
+The expected database is:
 
 mydatabase
 
-🩺 Quick Health Checks
+🧰 Useful Docker Commands
 
-Task
+Container Management
 
-Command
-
-List containers
-
-docker ps
-
-List all containers
-
-docker ps -a
-
-List networks
-
-docker network ls
-
-Inspect network
-
-docker network inspect <network>
-
-List volumes
-
-docker volume ls
-
-Inspect volume
-
-docker volume inspect <volume>
-
-Compose status
-
-docker compose -f Multi-Tier_Web_Application.yml ps
-
-View logs
-
-docker logs <container>
-
-Compose logs
-
-docker compose -f Multi-Tier_Web_Application.yml logs
-
-Enter container
-
-docker exec -it <container> /bin/bash
-
-🧪 Troubleshooting
-
+sudo docker ps
 sudo docker ps -a
+sudo docker start <container>
+sudo docker stop <container>
+sudo docker restart <container>
+sudo docker rm <container>
+
+Logs
+
+sudo docker logs <container>
+sudo docker logs -f <container>
+
+Container Shell
+
+sudo docker exec -it <container> /bin/bash
+
+Compose Management
+
 sudo docker compose -f Multi-Tier_Web_Application.yml ps
 sudo docker compose -f Multi-Tier_Web_Application.yml logs
 sudo docker compose -f Multi-Tier_Web_Application.yml logs -f
 sudo docker compose -f Multi-Tier_Web_Application.yml restart
 sudo docker compose -f Multi-Tier_Web_Application.yml down
 
-down -v removes volumes and may delete persistent database data. Use it carefully.
+Stop and Remove Volumes
 
-📸 Project Screenshots
+sudo docker compose -f Multi-Tier_Web_Application.yml down -v
 
-Docker Compose Configuration
+Warning: down -v removes Docker volumes. This can permanently remove stored MySQL data. Use it only when you intentionally want to delete persistent data.
+
+🛠️ Troubleshooting
+
+Check All Containers
+
+sudo docker ps -a
+
+Check Compose Status
+
+sudo docker compose -f Multi-Tier_Web_Application.yml ps
+
+View Application Logs
+
+sudo docker compose -f Multi-Tier_Web_Application.yml logs
+
+Follow Logs in Real Time
+
+sudo docker compose -f Multi-Tier_Web_Application.yml logs -f
+
+Restart the Application
+
+sudo docker compose -f Multi-Tier_Web_Application.yml restart
+
+Check Network Connectivity
+
+sudo docker network ls
+sudo docker network inspect <network-name>
+
+Check Persistent Storage
+
+sudo docker volume ls
+sudo docker volume inspect <volume-name>
+
+📸 Screenshots
+
+⚙️ Docker Compose Configuration
 
 
 
-Running Docker Containers
-
-
-
-MySQL Database Verification
+Docker Containers Running
 
 
 
@@ -368,37 +467,51 @@ NGINX Web Server
 
 
 
-🔐 Security Considerations
+🗄️ MySQL Database Verification
 
-For a production-oriented deployment:
 
-Store credentials in environment variables or a secret manager
 
-Never commit .env files or real credentials
+🔒 Security Considerations
 
-Restrict AWS Security Group rules
+For a production deployment, consider the following:
 
-Avoid publicly exposing MySQL port 3306 unless required
+Do not commit .env files or credentials
 
-Use HTTPS/TLS
+Use Docker secrets or a cloud secret-management service
 
-Pin Docker image versions instead of unrestricted latest tags
+Avoid exposing MySQL port 3306 publicly unless required
+
+Restrict AWS Security Group inbound rules
+
+Use HTTPS/TLS for public traffic
+
+Pin container image versions instead of relying on floating tags
 
 Add container health checks
 
-Apply least-privilege configuration
+Use least-privilege database users
 
-Implement logging and monitoring
+Regularly update base images
 
-📈 Future Enhancements
+Scan container images for vulnerabilities
+
+Centralize application and container logs
+
+Monitor CPU, memory, disk, and application health
+
+🔮 Future Enhancements
+
+The project can be extended with:
 
 GitHub Actions CI/CD
 
-Jenkins pipeline
+Jenkins CI/CD pipeline
 
-AWS EC2 deployment automation
+Docker image build and push to Amazon ECR
 
-Terraform Infrastructure as Code
+AWS EC2 automated deployment
+
+Terraform infrastructure as code
 
 AWS Secrets Manager
 
@@ -408,15 +521,21 @@ Prometheus and Grafana monitoring
 
 Centralized logging
 
-Docker image security scanning
+Container image vulnerability scanning
 
-Kubernetes deployment
+Docker health checks
 
 Load balancing
 
-🎓 DevOps Skills Demonstrated
+Kubernetes deployment
 
-Linux
+Auto Scaling
+
+Infrastructure automation
+
+💡 DevOps Skills Demonstrated
+
+Linux Administration
 Docker
 Docker Compose
 NGINX
@@ -424,7 +543,37 @@ PHP-FPM
 MySQL
 Docker Networking
 Docker Volumes
-Service Isolation
 Container Troubleshooting
 AWS EC2
+Git
+GitHub
 Application Deployment
+Production Support Concepts
+
+✨ Project Highlights
+
+Multi-tier application architecture
+
+Separate frontend and backend Docker networks
+
+Persistent database storage
+
+Containerized NGINX web server
+
+PHP 8.3-FPM application runtime
+
+MySQL database container
+
+Linux-based deployment
+
+AWS EC2 deployment experience
+
+Practical Docker troubleshooting
+
+GitHub-based project documentation
+
+👨‍💻 Author
+
+Prajwal Take
+
+AWS | DevOps | Linux | Docker | Cloud
