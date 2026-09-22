@@ -1,4 +1,4 @@
-🚀 Multi-Tier Web Application Deployment Using Docker Compose
+🚀 Multi-Tier Web Application Deployment Using Docker Compose.
 
 A professional multi-tier web application deployment using NGINX, PHP-FPM, MySQL, Docker Compose, Linux, and AWS EC2.
 
