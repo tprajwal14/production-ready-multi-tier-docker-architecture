@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-🚀 Multi-Tier Web Application Deployment Using Docker Compose
-=======
 # 🚀 Multi-Tier Web Application Deployment Using Docker Compose
->>>>>>> 2d2d2bd (modify file)
 
 A production-oriented **multi-tier web application architecture** demonstrating containerized deployment with **NGINX, PHP-FPM, and MySQL** using Docker Compose.
 
@@ -606,9 +602,3 @@ Production Support Concepts
 **Prajwal Take**
 
 AWS | DevOps | Linux | Docker | Cloud
-
----
-
-## 📌 Disclaimer
-
-This project is intended for **learning, portfolio demonstration, and DevOps practice**. Additional security, availability, observability, and infrastructure controls should be implemented before using a similar architecture for a production workload.
